@@ -1,0 +1,237 @@
+
+entity Retailer {
+    retailerId Long
+	name String required
+    logo String
+    owner String
+    ownerMobile String
+    email String
+    phone String required
+    gst String
+  	invoiceAddress Address
+    address Address
+    status Status
+  CreatedOn LocalDateTIme
+  UpdatedOn LocalDateTIme
+  CreatedBy String
+  UpdatedBy String
+}
+
+entity Media{
+mediaId Long
+path String
+type MediaType
+}
+
+entity Customer {
+    customerId Long
+    retailerId Retailer
+	name String
+    email String
+    phone Long required
+    BillingAddress Address
+    ShippingAddress Address
+    CreatedOn LocalDateTIme
+    UpdatedOn LocalDateTIme
+    CreatedBy String
+    UpdatedBy String
+}
+
+entity Address {
+	line1 String,
+    line2 String,
+    city String,
+    state String,
+    pincode Long,
+    lat Float,
+    lon Float,
+    country String,
+    landmark String
+    shippingAddress Boolean
+    billingAddress Boolean
+    homeAddress Boolean
+    officeAddress Boolean
+    CreatedOn LocalDateTIme
+    UpdatedOn LocalDateTIme
+    CreatedBy String
+    UpdatedBy String
+}
+
+relationship OneToMany {
+	Address to Order{address}
+}
+
+entity Invoice {
+invoiceId Long
+billNo String
+taxPercentage String
+retailerId Long
+paymentType PaymentType
+CreatedOn LocalDateTIme
+UpdatedOn LocalDateTIme
+CreatedBy String
+UpdatedBy String
+}
+
+entity RetailerUser{
+userId String
+phone Long
+email String
+type UserType
+retailerId Retail
+encPassword String
+status Boolean
+CreatedOn LocalDateTIme
+UpdatedOn LocalDateTIme
+CreatedBy String
+UpdatedBy String
+}
+
+entity InvoiceLineItem {
+inoivceLineItemId String
+invoiceId Long
+ArticleType Enum
+articleId String
+quantity Int
+amount Float
+discount Float
+CreatedOn LocalDateTIme
+UpdatedOn LocalDateTIme
+CreatedBy String
+UpdatedBy String
+}
+
+entity InvoiceGStLineItem{
+invoiceGStLineItemId String
+invoiceId Long
+ArticleType Enum
+articleId String
+HSNSAC String
+sgst Float
+cgst Float
+igst Float
+sgstTaxAmount Float
+cgstTaxAmount Float
+igstTaxAmount Float
+amount Float
+discount Float
+CreatedOn LocalDateTIme
+UpdatedOn LocalDateTIme
+CreatedBy String
+UpdatedBy String
+}
+
+entity Catalouge{
+catalogueId Long
+name String
+price Float
+taxPercentage Float
+status Boolean
+CreatedOn LocalDateTIme
+UpdatedOn LocalDateTIme
+CreatedBy String
+UpdatedBy String
+}
+
+entity RetailInventory{
+retailiInventoryId Long
+retailId Retailer
+catalogueId Long
+quantity Int
+availableQty Int
+soldQty Int
+maxLimit Int
+minLimit Int
+status Boolean
+CreatedOn LocalDateTIme
+UpdatedOn LocalDateTIme
+CreatedBy String
+UpdatedBy String
+}
+
+
+enum UserType {
+    OWNER,ADMIN, BILLING, AGENT
+}
+
+enum MediaType{
+PNG,JEPG
+}
+
+enum Status{
+Active, InActive
+}
+
+enum PaymentType{
+ NEFT, UPI, CASH, CREDIT,DEBIT
+}
+
+relationship OneToOne {
+	Country{region} to Region
+}
+
+relationship OneToMany {
+	Retailer{country} to Invoice
+}
+
+relationship OneToOne {
+	Retailer{country} to Media
+}
+
+relationship OneToMany {
+	Retailer{country} to RetailerUser
+}
+
+relationship OneToMany {
+	Invoice{invoice} to InvoiceLineItem
+}
+
+relationship OneToMany {
+	Invoice{invoice} to InvoiceGStLineItem
+}
+
+
+relationship OneToMany {
+	Retailer{invoice} to Catalouge
+}
+
+relationship ManyToMany {
+	Retailer{name} to Customer{customer}
+}
+
+// defining multiple OneToMany relationships with comments
+relationship OneToMany {
+	Employee to Job{employee},
+	/**
+	* A relationship
+	*/
+	Department to
+	/**
+	* Another side of the same relationship
+	*/
+	Employee{department}
+}
+
+relationship ManyToOne {
+	Employee{manager} to Employee
+}
+
+// defining multiple oneToOne relationships
+relationship OneToOne {
+	JobHistory{job} to Job,
+	JobHistory{department} to Department,
+	JobHistory{employee} to Employee
+}
+
+// Set pagination options
+paginate JobHistory, Employee with infinite-scroll
+paginate Job with pagination
+
+// Use Data Transfer Objects (DTO)
+// dto * with mapstruct
+
+// Set service options to all except few
+service all with serviceImpl except Employee, Job
+
+// Set an angular suffix
+// angularSuffix * with mySuffix
