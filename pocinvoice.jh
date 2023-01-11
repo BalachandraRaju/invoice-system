@@ -123,9 +123,12 @@ UpdatedBy String
 
 entity Catalouge{
 catalogueId Long
+category String
+subCategory String
+productId Long
 name String
 price Float
-taxPercentage Float
+discountThreshold Float
 status Boolean
 CreatedOn LocalDateTIme
 UpdatedOn LocalDateTIme
@@ -133,15 +136,12 @@ CreatedBy String
 UpdatedBy String
 }
 
-entity RetailInventory{
-retailiInventoryId Long
+entity Inventory{
+InventoryId Long
 retailId Retailer
-catalogueId Long
+productId Long
 quantity Int
-availableQty Int
-soldQty Int
-maxLimit Int
-minLimit Int
+serialized Boolean
 status Boolean
 CreatedOn LocalDateTIme
 UpdatedOn LocalDateTIme
@@ -149,6 +149,18 @@ CreatedBy String
 UpdatedBy String
 }
 
+entity InventoryItems{
+InventoryItemId Long
+retailId Retailer
+productId Long
+serialized1 String
+serialized1 String
+status Boolean
+CreatedOn LocalDateTIme
+UpdatedOn LocalDateTIme
+CreatedBy String
+UpdatedBy String
+}
 
 enum UserType {
     OWNER,ADMIN, BILLING, AGENT
@@ -192,7 +204,11 @@ relationship OneToMany {
 
 
 relationship OneToMany {
-	Retailer{invoice} to Catalouge
+	Retailer{retialler} to Inventory
+}
+
+relationship OneToMany {
+	Inventory{retialler} to InventoryItems
 }
 
 relationship ManyToMany {
